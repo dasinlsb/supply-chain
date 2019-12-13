@@ -1,4 +1,4 @@
-import React, {ComponentProps} from "react";
+import React from "react";
 import {createStyles, Paper, Theme} from "@material-ui/core";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";

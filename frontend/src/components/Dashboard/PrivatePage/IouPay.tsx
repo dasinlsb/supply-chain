@@ -5,7 +5,6 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import makeStyles from "@material-ui/core/styles/makeStyles";
 import {useMutate} from "restful-react/lib";
 import {Snackbar} from "@material-ui/core";
 
@@ -40,10 +39,6 @@ export default function IouPay() {
 
   const updateInfo = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
     setState({...state, [event.target.name as string]: event.currentTarget.value, })
-  };
-
-  const clearInfo = () => {
-    setState({...initialState, openIou: state.openIou, openMsg: state.openMsg, })
   };
 
   const { mutate: addIou } = useMutate({

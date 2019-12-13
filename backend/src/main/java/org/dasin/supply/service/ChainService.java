@@ -117,7 +117,7 @@ public class ChainService {
         Supply supply = loadSupplyContract();
         Tuple3<String, String, BigInteger> res = supply.getOrgInfo(address).send();
         Organization org = new Organization();
-        org.setOrgAddr(getAddress());
+        org.setOrgAddr(address);
         org.setOrgId(res.getValue1());
         org.setOrgType(res.getValue2());
         org.setIouLimit(Long.parseLong(res.getValue3().toString()));

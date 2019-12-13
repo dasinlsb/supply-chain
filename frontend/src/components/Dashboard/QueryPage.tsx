@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {createStyles, Paper, Theme} from "@material-ui/core";
+import {createStyles, Theme} from "@material-ui/core";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import {useGet} from "restful-react/lib";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -16,9 +16,6 @@ const useStyles = makeStyles((theme: Theme) =>
       width: "90%",
       overflowX: "auto"
     },
-    table: {
-      minWidth: 700
-    }
   })
 );
 
@@ -40,7 +37,7 @@ export default function QueryPage() {
     setState({...state, [event.target.name as string]: event.currentTarget.value,})
   };
 
-  const { data: query, loading, refetch } = useGet({
+  const { data: query, refetch } = useGet({
     path: '/ious?'+qs.stringify({addr: state.fromAddr}),
     resolve: data => {
       console.log("query result: ", data);

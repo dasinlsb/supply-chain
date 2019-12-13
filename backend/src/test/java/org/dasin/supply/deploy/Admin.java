@@ -62,10 +62,14 @@ public class Admin extends BaseTest {
         System.out.println(credentials.getAddress());
         Supply supply = Supply.load(contractAddress, web3j, credentials, new StaticGasProvider(GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT));
         Organization org = new Organization();
-        org.setOrgAddr("0x68572e0577310257fc1237105b2a76edd2509154");
-        org.setOrgId("2");
+//        org.setOrgAddr("0x68572e0577310257fc1237105b2a76edd2509154");
+//        org.setOrgId("2");
+//        org.setOrgType("enterprise");
+//        org.setIouLimit(100L);
+        org.setOrgAddr("0x953da8d59629a5cf1db5efcb3e2ad8608b55714e");
+        org.setOrgId("3");
         org.setOrgType("enterprise");
-        org.setIouLimit(100L);
+        org.setIouLimit(150L);
         TransactionReceipt receipt = supply.addOrg(org.getOrgAddr(), org.getOrgId(), org.getOrgType(), BigInteger.valueOf(org.getIouLimit())).send();
         List<Supply.OrgCreationEventResponse> responses = supply.getOrgCreationEvents(receipt);
         if (responses.isEmpty()) {

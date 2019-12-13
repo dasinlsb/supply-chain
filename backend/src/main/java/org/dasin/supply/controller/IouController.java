@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,13 +22,20 @@ import java.util.Map;
 public class IouController {
     @Autowired ChainService chainService;
 
+    private final SimpleDateFormat dateParser = new SimpleDateFormat("yyyy.MM.dd");
+    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy.MM.dd");
+
     @PostMapping(value = "/ious", produces = "application/json;charset=UTF-8")
     public void addIou(@RequestBody Map<String,String> map) {
         Iou iou = new Iou();
-        iou.setToOrgAddr(map.get("toAddr"));
-        iou.setAmount(Long.parseLong(map.get("amount")));
-        iou.setCreateTime(new Date().toString());
-        iou.setDue(map.get("due"));
+        try {
+            iou.setToOrgAddr(map.get("toAddr"));
+            iou.setAmount(Long.parseLong(map.get("amount")));
+            iou.setCreateTime(new Date().toString());
+            iou.setDue(dateFormatter.format(dateParser.parse(map.get("due"))));
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.toString());
+        }
         try {
             chainService.addIou(iou);
         } catch (Exception e) {
@@ -47,7 +55,8 @@ public class IouController {
                     HttpStatus.INTERNAL_SERVER_ERROR, "chain operation error: "+e
             );
         }
-        System.out.printf("GET /ious/me, address: %s, data: %s\n", chainService.getAddress(), ious.size());
+        System.out.printf("GET /ious/me, address: %s, data: %s\n",
+                chainService.getAddress(), ious.size());
         JSONObject res = new JSONObject();
         res.put("ious", ious);
         return res.toJSONString();
@@ -88,10 +97,16 @@ public class IouController {
     @PostMapping(value = "/trans", produces = "application/json;charset=UTF-8")
     public void transIou(@RequestBody Map<String,String> map) {
         Iou iou = new Iou();
-        iou.setIouId(Long.parseLong(map.get("iouId")));
-        iou.setToOrgAddr(map.get("toAddr"));
-        iou.setAmount(Long.parseLong(map.get("value")));
-        iou.setCreateTime(new Date().toString());
+        try {
+            iou.setIouId(Long.parseLong(map.get("iouId")));
+            iou.setToOrgAddr(map.get("toAddr"));
+            iou.setAmount(Long.parseLong(map.get("value")));
+            iou.setCreateTime(dateFormatter.format(new Date()));
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, e.toString()
+            );
+        }
         try {
             chainService.transIouFrom(iou);
         } catch (Exception e) {
@@ -104,8 +119,14 @@ public class IouController {
     @PostMapping(value = "/pay", produces = "application/json;charset=UTF-8")
     public void payIou(@RequestBody Map<String,String> map) {
         Iou iou = new Iou();
-        iou.setIouId(Long.parseLong(map.get("iouId")));
-        iou.setAmount(Long.parseLong(map.get("value")));
+        try {
+            iou.setIouId(Long.parseLong(map.get("iouId")));
+            iou.setAmount(Long.parseLong(map.get("value")));
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, e.toString()
+            );
+        }
         try {
             chainService.payIou(iou);
         } catch (Exception e) {
