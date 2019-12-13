@@ -25,6 +25,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -35,26 +36,17 @@ import java.util.Properties;
 public class ChainService {
     static Logger logger = LoggerFactory.getLogger(ChainService.class);
 
-
     @Autowired private Web3j web3j;
     @Autowired private Credentials credentials;
 
-    private static List<String> contractAddrList = new ArrayList<>();
-
     public void deployAndSaveAddr() throws Exception {
-        Resource contractResource = new ClassPathResource("contract.properties");
+        Supply supply = Supply.deploy(web3j, credentials, new StaticGasProvider(GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT)).send();
+        System.out.println(" deploy Asset success, contract address is " + supply.getContractAddress());
         Properties prop = new Properties();
-        prop.load(contractResource.getInputStream());
-        String address = prop.getProperty("address");
-        if (address == null || address.trim().equals("")) {
-            Supply supply = Supply.deploy(web3j, credentials, new StaticGasProvider(GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT)).send();
-            address = supply.getContractAddress();
-            prop.setProperty("address", address);
-            FileOutputStream fileOutputStream = new FileOutputStream(contractResource.getFile());
-            prop.store(fileOutputStream, "supply-chain contract address");
-            fileOutputStream.flush();
-            fileOutputStream.close();
-        }
+        prop.setProperty("address", supply.getContractAddress());
+        final Resource contractResource = new ClassPathResource("contract.properties");
+        FileOutputStream fileOutputStream = new FileOutputStream(contractResource.getFile());
+        prop.store(fileOutputStream, "contract address");
     }
 
     public String loadSupplyAddr() throws Exception {
@@ -65,7 +57,7 @@ public class ChainService {
 
         String contractAddress = prop.getProperty("address");
         if (contractAddress == null || contractAddress.trim().equals("")) {
-            throw new Exception(" load Supply Chain contract address failed, please deploy it first. ");
+            throw new Exception(" load supply chain contract address failed, please deploy it first. ");
         }
         logger.info(" load Asset address from contract.properties, address is {}", contractAddress);
         return contractAddress;
@@ -79,33 +71,32 @@ public class ChainService {
     public void initAllService() throws Exception {
         Assert.assertNotNull(web3j);
         Assert.assertNotNull(credentials);
-        deployAndSaveAddr();
+        //deployAndSaveAddr();
         {
-            Organization org = new Organization();
-            org.setOrgAddr("0xcdcce60801c0a2e6bb534322c32ae528b9dec8d2");
-            org.setOrgId("1");
-            org.setOrgType("enterprise");
-            org.setIouLimit(200L);
-            addOrg(org);
-            org.setOrgAddr("0x953da8d59629a5cf1db5efcb3e2ad8608b55714e");
-            org.setOrgId("2");
-            org.setOrgType("enterprise");
-            org.setIouLimit(150L);
-            addOrg(org);
-            org.setOrgAddr("0x68572e0577310257fc1237105b2a76edd2509154");
-            org.setOrgId("3");
-            org.setOrgType("enterprise");
-            org.setIouLimit(150L);
-            addOrg(org);
+//            Organization org = new Organization();
+//            org.setOrgAddr("0xcdcce60801c0a2e6bb534322c32ae528b9dec8d2");
+//            org.setOrgId("1");
+//            org.setOrgType("enterprise");
+//            org.setIouLimit(200L);
+//            addOrg(org);
+//            org.setOrgAddr("0x953da8d59629a5cf1db5efcb3e2ad8608b55714e");
+//            org.setOrgId("2");
+//            org.setOrgType("enterprise");
+//            org.setIouLimit(150L);
+//            addOrg(org);
+//            org.setOrgAddr("0x68572e0577310257fc1237105b2a76edd2509154");
+//            org.setOrgId("3");
+//            org.setOrgType("enterprise");
+//            org.setIouLimit(150L);
+//            addOrg(org);
 
-            String assetAddr = "0xdc30f75b2e16d5ccfacb493db741e124220e45ee";
-            Asset asset = Asset.load(assetAddr, web3j, credentials, new StaticGasProvider(GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT));
-
-            System.out.println("Asset address is: " + asset.getContractAddress());
-            Tuple2<BigInteger, BigInteger> result = asset.select("Alice").send();
-            System.out.printf("found %s, value %s\n", "alice", result.getValue2());
+//            String assetAddr = "0xdc30f75b2e16d5ccfacb493db741e124220e45ee";
+//            Asset asset = Asset.load(assetAddr, web3j, credentials, new StaticGasProvider(GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT));
+//            System.out.println("Asset address is: " + asset.getContractAddress());
+//            Tuple2<BigInteger, BigInteger> result = asset.select("Alice").send();
+//            System.out.printf("found %s, value %s\n", "alice", result.getValue2());
         }
-        logger.info("initialization of chain ok");
+        logger.info("initialization of chain-end finished");
     }
 
     public String getAddress() {
@@ -114,11 +105,11 @@ public class ChainService {
 
     public void addOrg(Organization org) throws Exception {
         Supply supply = loadSupplyContract();
-        System.out.println("add org addr: "+org.getOrgAddr()+", "+BigInteger.valueOf(org.getIouLimit()));
+        System.out.println("will add organization addr: "+org.getOrgAddr());
         TransactionReceipt receipt = supply.addOrg(org.getOrgAddr(), org.getOrgId(), org.getOrgType(), BigInteger.valueOf(org.getIouLimit())).send();
         List<Supply.OrgCreationEventResponse> responses = supply.getOrgCreationEvents(receipt);
         if (responses.isEmpty()) {
-            System.out.println("add org transaction error");
+            System.out.println("ERROR on addOrg transaction");
         }
     }
 
@@ -135,9 +126,11 @@ public class ChainService {
 
     public List<Organization> getAllOrgInfo() throws Exception {
         Supply supply = loadSupplyContract();
+        //TODO: replace 10 below
         List addrs = supply.getOrgAddrs(BigInteger.valueOf(10L)).send();
         List<Organization> orgs = new ArrayList<>();
         for (Object addr : addrs) {
+            System.out.println("getAllOrgInfo orgAddr: "+addr.toString());
             Organization org = getOrgInfo(addr.toString());
             orgs.add(org);
         }
@@ -171,26 +164,38 @@ public class ChainService {
         TransactionReceipt receipt = supply.addIou(iou.getFromOrgAddr(), iou.getToOrgAddr(),
                 iou.getCreateTime(), BigInteger.valueOf(iou.getAmount()),
                 iou.getDue()).send();
-        List<Supply.IouCreationEventResponse> response = supply.getIouCreationEvents(receipt);
-        if (!response.isEmpty()) {
-            System.out.println("add iou event status: "+response.get(0).iouId);
-        } else {
-            System.out.println("transaction error");
+        List<Supply.IouCreationEventResponse> responses = supply.getIouCreationEvents(receipt);
+        if (responses.isEmpty()) {
+            System.out.println("ERROR on addIou transaction");
         }
-        List iouIds = supply.getOrgOutIous(addr).send();
-        System.out.println("after add one iou, the outIous count: "+iouIds.size());
     }
 
-    public void transIou(Iou iou) throws Exception {
+    public void transIouFrom(Iou iou) throws Exception {
         Supply supply = loadSupplyContract();
-        String addr = getAddress();
         supply.splitIou(BigInteger.valueOf(iou.getIouId()), BigInteger.valueOf(iou.getAmount()), iou.getCreateTime()).send();
-        supply.transferIouFrom(BigInteger.valueOf(iou.getIouId()), iou.getFromOrgAddr()).send();
+        TransactionReceipt receipt = supply.transferIouFrom(BigInteger.valueOf(iou.getIouId()), iou.getFromOrgAddr()).send();
+        List<Supply.IouTransferFromEventResponse> responses = supply.getIouTransferFromEvents(receipt);
+        if (responses.isEmpty()) {
+            System.out.println("ERROR on transIouFrom transaction");
+        }
+    }
+
+    public void transIouTo(Iou iou) throws Exception {
+        Supply supply = loadSupplyContract();
+        supply.splitIou(BigInteger.valueOf(iou.getIouId()), BigInteger.valueOf(iou.getAmount()), iou.getCreateTime()).send();
+        TransactionReceipt receipt = supply.transferIouTo(BigInteger.valueOf(iou.getIouId()), iou.getFromOrgAddr()).send();
+        List<Supply.IouTransferToEventResponse> responses = supply.getIouTransferToEvents(receipt);
+        if (responses.isEmpty()) {
+            System.out.println("ERROR on transIouTo transaction");
+        }
     }
 
     public void payIou(Iou iou) throws Exception {
         Supply supply = loadSupplyContract();
-        String addr = getAddress();
-        supply.payIou(BigInteger.valueOf(iou.getIouId()), BigInteger.valueOf(iou.getAmount())).send();
+        TransactionReceipt receipt = supply.payIou(BigInteger.valueOf(iou.getIouId()), BigInteger.valueOf(iou.getAmount())).send();
+        List<Supply.IouPaybackEventResponse> responses = supply.getIouPaybackEvents(receipt);
+        if (responses.isEmpty()) {
+            System.out.println("ERROR on payIou transaction");
+        }
     }
 }

@@ -1,6 +1,5 @@
 package org.dasin.supply.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.dasin.supply.model.Iou;
 import org.dasin.supply.model.Organization;
@@ -12,7 +11,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,17 +21,6 @@ import java.util.Map;
 public class IouController {
     @Autowired ChainService chainService;
 
-//    @GetMapping(value = "/ious", params = {"page"}, produces = "application/json;charset=UTF-8")
-//    public String getIouRange(@RequestParam(value = "page")int page,
-//                            HttpServletRequest request, HttpServletResponse response) {
-//        String orgId = (String) request.getSession().getAttribute("orgId");
-//        if (orgId == null) {
-//            throw new ResponseStatusException(
-//                    HttpStatus.UNAUTHORIZED, "not login"
-//            );
-//        }
-//        return "";
-//    }
     @PostMapping(value = "/ious", produces = "application/json;charset=UTF-8")
     public void addIou(@RequestBody Map<String,String> map) {
         Iou iou = new Iou();
@@ -60,7 +47,7 @@ public class IouController {
                     HttpStatus.INTERNAL_SERVER_ERROR, "chain operation error: "+e
             );
         }
-        System.out.printf("GET /ious/me, address: %s\ndata: %s\n", chainService.getAddress(), ious.size());
+        System.out.printf("GET /ious/me, address: %s, data: %s\n", chainService.getAddress(), ious.size());
         JSONObject res = new JSONObject();
         res.put("ious", ious);
         return res.toJSONString();
@@ -76,7 +63,7 @@ public class IouController {
                     HttpStatus.INTERNAL_SERVER_ERROR, "chain operation error: "+e
             );
         }
-        System.out.printf("GET /ious?, address: %s\ndata: %s\n", fromAddr, ious.size());
+        System.out.printf("GET /ious?, address: %s, data: %s\n", fromAddr, ious.size());
         JSONObject res = new JSONObject();
         res.put("ious", ious);
         return res.toJSONString();
@@ -106,7 +93,7 @@ public class IouController {
         iou.setAmount(Long.parseLong(map.get("value")));
         iou.setCreateTime(new Date().toString());
         try {
-            chainService.transIou(iou);
+            chainService.transIouFrom(iou);
         } catch (Exception e) {
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, "chain operation error: "+e
