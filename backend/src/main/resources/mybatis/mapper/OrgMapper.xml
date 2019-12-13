@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.dasin.supply.mapper.OrgMapper" >
+
+    <insert id="addOrg" parameterType="org.dasin.supply.model.Organization">
+        INSERT INTO
+          organizations
+          (orgName, orgType, corporationIdCardNumber, phoneNumber, username, password)
+        VALUES (#{org.orgName}, #{orgType}, #{corporationIdCardNumber}, #{phoneNumber}, #{username}, #{password})
+    </insert>
+
+    <select id="queryById" parameterType="java.lang.String">
+        SELECT * FROM organizations WHERE orgId = #{orgId}
+    </select>
+
+    <select id="validateOrg">
+        SELECT orgId FROM `organizations` WHERE `username` = #{username} AND `password` = #{password}
+    </select>
+</mapper>
