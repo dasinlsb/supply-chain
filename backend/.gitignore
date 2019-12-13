@@ -1,0 +1,7 @@
+.idea
+build/
+logs/
+out/
+target/
+*.bash
+*.sql
