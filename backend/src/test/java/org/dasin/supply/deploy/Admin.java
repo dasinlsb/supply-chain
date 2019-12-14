@@ -66,10 +66,14 @@ public class Admin extends BaseTest {
 //        org.setOrgId("2");
 //        org.setOrgType("enterprise");
 //        org.setIouLimit(100L);
-        org.setOrgAddr("0x953da8d59629a5cf1db5efcb3e2ad8608b55714e");
-        org.setOrgId("3");
+//        org.setOrgAddr("0x953da8d59629a5cf1db5efcb3e2ad8608b55714e");
+//        org.setOrgId("3");
+//        org.setOrgType("enterprise");
+//        org.setIouLimit(150L);
+        org.setOrgAddr("0xcdcce60801c0a2e6bb534322c32ae528b9dec8d2");
+        org.setOrgId("4");
         org.setOrgType("enterprise");
-        org.setIouLimit(150L);
+        org.setIouLimit(200L);
         TransactionReceipt receipt = supply.addOrg(org.getOrgAddr(), org.getOrgId(), org.getOrgType(), BigInteger.valueOf(org.getIouLimit())).send();
         List<Supply.OrgCreationEventResponse> responses = supply.getOrgCreationEvents(receipt);
         if (responses.isEmpty()) {
