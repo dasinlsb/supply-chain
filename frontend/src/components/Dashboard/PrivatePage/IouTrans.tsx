@@ -93,8 +93,8 @@ export default function IouTrans() {
           <Button onClick={() => {
             addIou(state)
             .then(() => {
-              setState({...initialState, openIou: false, openMsg: true, });
-            })
+              setState({...initialState, openIou: false, openMsg: true, lastSuccess: true, });
+            }).catch(err => setState({...initialState, openIou: false, openMsg: true, lastSuccess: false, }))
           }} color="primary">
             提交
           </Button>
@@ -107,7 +107,7 @@ export default function IouTrans() {
         ContentProps={{
           'aria-describedby': 'message-id',
         }}
-        message={<span id="message-id">操作成功</span>}
+        message={<span id="message-id">{state.lastSuccess ? '操作成功' : '操作失败,注意数据合法性及日期格式(yyyy.MM.dd)'}</span>}
       />
     </div>
   );
