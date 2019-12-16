@@ -26,19 +26,19 @@ accounts:
   p12-file: 0x98333491efac02f8ce109b0c499074d47e7779a6.p12
   password: 123456
 
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/dasin_supply?characterEncoding=utf8&useSSL=false
-    username: dasin
-    password: 12345abcde
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    show-sql: true
-    properties:
-      hibernate:
-        hbm2ddl:
-          auto: create
-        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+#spring:
+#  datasource:
+#    url: jdbc:mysql://localhost:3306/dasin_supply?characterEncoding=utf8&useSSL=false
+#    username: dasin
+#    password: 12345abcde
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#  jpa:
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        hbm2ddl:
+#          auto: create
+#        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
 
 
 #mybatis:

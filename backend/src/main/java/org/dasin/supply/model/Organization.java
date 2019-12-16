@@ -1,29 +1,35 @@
 package org.dasin.supply.model;
 
-import javax.persistence.*;
 import java.io.Serializable;
 
-@Entity
-//@Table(name = "organizations")
 public class Organization implements Serializable {
     private static final long serialVersionUID = 1L;
-    // request
-    @Id
+//    @Id
+//    private String orgId;
+//    private String orgAddr;
+//    @Column(nullable = false, length = 100)
+//    private String orgName;
+//    @Column(nullable = false, length = 12)
+//    private String orgType;
+//    @Column(nullable = false, length = 18)
+//    private String corporationIdCardNumber;
+//    @Column(nullable = false, length = 13)
+//    private String phoneNumber;
+//    @Column(nullable = false, length = 32)
+//    private String username;
+//    @Column(nullable = false, length = 32)
+//    private String password;
+//    @Column(nullable = false, length = 64)
+//    private String createTime;
+//    private Long iouLimit;
     private String orgId;
     private String orgAddr;
-    @Column(nullable = false, length = 100)
     private String orgName;
-    @Column(nullable = false, length = 12)
     private String orgType;
-    @Column(nullable = false, length = 18)
     private String corporationIdCardNumber;
-    @Column(nullable = false, length = 13)
     private String phoneNumber;
-    @Column(nullable = false, length = 32)
     private String username;
-    @Column(nullable = false, length = 32)
     private String password;
-    @Column(nullable = false, length = 64)
     private String createTime;
     private Long iouLimit;
 

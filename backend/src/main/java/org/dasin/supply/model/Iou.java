@@ -1,24 +1,27 @@
 package org.dasin.supply.model;
 
-import javax.persistence.*;
 import java.io.Serializable;
 
-@Entity
-//@Table(name = "ious")
 public class Iou implements Serializable {
-    // request
-    @Id
     private Long iouId;
-    @Column(length = 32)
     private String fromOrgAddr;
-    @Column(length = 32)
     private String toOrgAddr;
     private Long amount;
     private Long remain;
-    @Column(nullable = false, length = 64)
     private String createTime;
-    @Column(nullable = false, length = 64)
     private String due;
+//    @Id
+//    private Long iouId;
+//    @Column(length = 32)
+//    private String fromOrgAddr;
+//    @Column(length = 32)
+//    private String toOrgAddr;
+//    private Long amount;
+//    private Long remain;
+//    @Column(nullable = false, length = 64)
+//    private String createTime;
+//    @Column(nullable = false, length = 64)
+//    private String due;
 
     public Iou() {
         super();

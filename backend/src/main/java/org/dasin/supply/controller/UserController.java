@@ -2,7 +2,6 @@ package org.dasin.supply.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import org.dasin.supply.model.Organization;
-import org.dasin.supply.repository.OrgRepository;
 import org.dasin.supply.service.ChainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,49 +18,35 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1")
 public class UserController {
-    @Autowired
-    private OrgRepository orgRepository;
 
     @Autowired
     private ChainService chainService;
-    /**
-     * Login with username & password
-     * @param map - { username, password }
-     * @param request
-     * @param response
-     * @return - { status: "success" | "fail" }
-     */
-    @PostMapping(value = "/login", produces = "application/json;charset=UTF-8")
-    @ResponseBody
-    public String login(@RequestBody Map<String, String> map, HttpServletRequest request, HttpServletResponse response) {
-        String username = map.get("username");
-        String password = map.get("password");
 
-        System.out.printf("is searching for username: %s, password: %s\n", username, password);
-        List<Organization> orgs = orgRepository.findByUsernameAndPassword(username, password);
-
-        JSONObject res = new JSONObject();
-        if (orgs.isEmpty()) {
+    @GetMapping(value = "/login", produces = "application/json;charset=UTF-8")
+    public String login(@RequestParam(value = "account")String account, HttpServletRequest request, HttpServletResponse response) {
+        if (!account.equals(chainService.getAddress())) {
             throw new ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED, "wrong username or password"
+                    HttpStatus.UNAUTHORIZED, "wrong account"
             );
-        } else {
-            Organization org = orgs.get(0);
-            request.getSession().setAttribute("orgId", org.getOrgId());
-            res.put("status", "success");
-            res.put("orgInfo", org);
         }
-
+        Organization org;
+        try {
+            org = chainService.getOrgInfo(account);
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, "query chain error:"+e
+            );
+        }
+        JSONObject info = new JSONObject();
+        info.put("account", account);
+        info.put("orgId", org.getOrgId());
+        info.put("orgType", org.getOrgType());
+        JSONObject res = new JSONObject();
+        res.put("info", info);
+        System.out.println("login with account: "+account + " successfully: "+res);
         return res.toJSONString();
     }
 
-    /**
-     * Register an organization
-     * @param map
-     * @param request
-     * @param response
-     * @return
-     */
 //    @PostMapping(value = "/users", produces = "application/json;charset=UTF-8")
 //    @ResponseBody
 //    public String register(@RequestBody Map<String, String> map,

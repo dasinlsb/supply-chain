@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function PermanentDrawerLeft() {
+export default function Dashboard() {
   const classes = useStyles();
 
   return (

@@ -34,5 +34,5 @@ SYSU 2019 区块链课程期末作业
     yarn start
 ```
 
-登录注册功能未实现，请直接进入`http://localhost:3000/dashboard`
+请用浏览器访问`http://localhost:3000`，输入后端配置文件`application.yml`中的`account.pem-file`字段值（不包括.pem后缀名）
 

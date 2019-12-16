@@ -1,12 +1,10 @@
-import React, {createContext, useContext, useReducer, useState} from "react";
-import config from "../config";
-import * as querystring from "querystring";
+import React, {createContext, useContext, useReducer} from "react";
 import {OrgType} from "../types";
 
 export interface AuthInfoType {
-  orgName: string;
+  account: string;
   orgType: OrgType;
-  username: string;
+  orgId: string;
 }
 
 export interface AuthState {
@@ -17,9 +15,9 @@ export interface AuthState {
 const initialState: AuthState = {
   isAuthenticated: false,
   info: {
-    orgName: 'unknown organization name',
+    account: '',
     orgType: undefined,
-    username: 'unknown username',
+    orgId: '',
   }
 };
 
@@ -66,9 +64,15 @@ export const useAuth = () => {
 const useProvideAuth = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const login= (data: AuthInfoType) => dispatch({ type: 'login', data, });
+  const login= (data: AuthInfoType) => {
+    localStorage.setItem('account', data.account);
+    dispatch({ type: 'login', data, });
+  };
 
-  const logout = () => dispatch({ type: 'logout', });
+  const logout = () => {
+    localStorage.removeItem('account');
+    dispatch({ type: 'logout', });
+  };
 
   return ({
     state,

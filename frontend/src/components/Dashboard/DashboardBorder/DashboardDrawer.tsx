@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function PermanentDrawerLeft() {
+export default function DashboardDrawer() {
   const classes = useStyles();
   return (
     <div className={classes.root}>

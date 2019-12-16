@@ -4,6 +4,8 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
 import Login from "./Login";
+import {useAuth} from "../AuthProvider";
+import {Redirect} from "react-router";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -21,14 +23,16 @@ const useStyles = makeStyles(theme => ({
 
 export default function EntryPage() {
   const classes = useStyles();
-
-  return (
+  const auth = useAuth();
+  if (auth.state.isAuthenticated) {
+    console.log('EntryPage will be redirected to dashboard');
+  }
+  return auth.state.isAuthenticated ? <Redirect to="/dashboard"/> :
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
       <Grid item xs={false} sm={4} md={6} className={classes.image} />
       <Grid item xs={12} sm={8} md={6} component={Paper} elevation={6} square>
         <Login />
       </Grid>
-    </Grid>
-  );
+    </Grid>;
 }
