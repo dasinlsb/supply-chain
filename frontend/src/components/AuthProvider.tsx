@@ -8,11 +8,13 @@ export interface AuthInfoType {
 }
 
 export interface AuthState {
+  isAdmin: boolean;
   isAuthenticated: boolean;
   info: AuthInfoType;
 }
 
 const initialState: AuthState = {
+  isAdmin: false,
   isAuthenticated: false,
   info: {
     account: '',
@@ -22,7 +24,7 @@ const initialState: AuthState = {
 };
 
 export type ReducerAction =
-  | { type: 'login'; data: AuthInfoType; }
+  | { type: 'login'; data: { info: AuthInfoType; isAdmin: boolean; } }
   | { type: 'logout'; }
 
 const reducer = (state: AuthState, action: ReducerAction) => {
@@ -30,7 +32,8 @@ const reducer = (state: AuthState, action: ReducerAction) => {
     case "login":
       return {
         ...state,
-        info: action.data,
+        info: action.data.info,
+        isAdmin: action.data.isAdmin,
         isAuthenticated: true,
       };
     case "logout":
@@ -42,7 +45,7 @@ const reducer = (state: AuthState, action: ReducerAction) => {
 
 interface IAuthContext {
   state: AuthState;
-  login: (data: AuthInfoType) => void;
+  login: (data: {info: AuthInfoType, isAdmin: boolean,}) => void;
   logout: () => void;
 }
 
@@ -64,8 +67,7 @@ export const useAuth = () => {
 const useProvideAuth = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const login= (data: AuthInfoType) => {
-    localStorage.setItem('account', data.account);
+  const login= (data: {info: AuthInfoType, isAdmin: boolean,}) => {
     dispatch({ type: 'login', data, });
   };
 

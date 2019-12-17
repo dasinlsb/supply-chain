@@ -8,7 +8,15 @@ import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import {useContainer} from "unstated-next";
-import {RegProcessor} from "./RegisterPage";
+import {SubstepProps} from "./index";
+import Button from "@material-ui/core/Button";
+import Dropzone from "react-dropzone-uploader";
+import 'react-dropzone-uploader/dist/styles.css';
+
+
+import config from "../../../config";
+import qs from 'qs';
+import Typography from "@material-ui/core/Typography";
 
 
 const useStyles = makeStyles(theme => ({
@@ -35,13 +43,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function NecessaryInfo() {
+export default function NecessaryInfo(props: SubstepProps) {
   const classes = useStyles();
-  const reg = useContainer(RegProcessor);
   return (
     <Container component="main" maxWidth="xs">
       <div className={classes.paper}>
-        <form className={classes.form} noValidate>
+        <div className={classes.form}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               {"组织信息"}
@@ -51,9 +58,21 @@ export default function NecessaryInfo() {
                 variant="outlined"
                 required
                 fullWidth
-                label="组织名称"
-                name="orgName"
-                onChange={reg.updateInfo}
+                label="账户地址"
+                name="orgAddr"
+                onChange={props.updateInfo}
+                value={props.info.orgAddr}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                label="组织编号"
+                name="orgId"
+                onChange={props.updateInfo}
+                value={props.info.orgId}
               />
             </Grid>
             <Grid item xs={12}>
@@ -64,8 +83,10 @@ export default function NecessaryInfo() {
                     name: 'orgType',
                     id: 'age-simple',
                   }}
-                  onChange={reg.updateInfo}
+                  value={props.info.orgType}
+                  onChange={props.updateInfo}
                 >
+                  <MenuItem value={""}>{' '}</MenuItem>
                   <MenuItem value={"enterprise"}>企业</MenuItem>
                   <MenuItem value={"funder"}>资金提供方</MenuItem>
                 </Select>
@@ -76,60 +97,25 @@ export default function NecessaryInfo() {
                 variant="outlined"
                 required
                 fullWidth
-                label="法人身份证号"
-                name="corporationIdCardNumber"
-                onChange={reg.updateInfo}
+                label="额度限制"
+                name="iouLimit"
+                onChange={props.updateInfo}
+                value={props.info.iouLimit}
               />
             </Grid>
-            <Grid item xs={12}>
-              {"登录信息"}
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                label="管理员手机"
-                name="phoneNumber"
-                onChange={reg.updateInfo}
-              />
-            </Grid>
-
-
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                label="管理员用户名"
-                name="username"
-                onChange={reg.updateInfo}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                label="设置密码"
-                name="password"
-                onChange={reg.updateInfo}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                label="确认密码"
-                //onChange={reg.updateInfo}
-              />
-            </Grid>
-
+            <Dropzone
+              getUploadParams={() => ({
+                url: config.api_server_url + '/upload?' + qs.stringify({type: 'pem',})
+              })}
+              onSubmit={(files, allFiles) => allFiles.forEach(f => f.remove())}
+              inputContent={(file, extra) => (extra.reject ? '只允许上传以.pem后缀的文件' : '请点击或拖拽上传pem私钥文件')}
+              // onChangeStatus={({ meta }, status) => {
+              //   console.log(status, meta)
+              // }}
+              accept=".pem"
+            />
           </Grid>
-
-
-        </form>
+        </div>
       </div>
 
     </Container>

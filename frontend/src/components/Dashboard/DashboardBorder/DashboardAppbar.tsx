@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function DashboardAppbar() {
+export default function DashboardAppbar(props: { account: string; isAdmin: boolean; }) {
   const classes = useStyles();
 
   const auth = useAuth();
@@ -29,8 +29,12 @@ export default function DashboardAppbar() {
     <div className={classes.root}>
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
-          <Typography variant="h6" noWrap className={classes.title}>
+          <Typography variant="h5" noWrap className={classes.title}>
             {"供应链金融平台"}
+          </Typography>
+          <Typography className={classes.title} variant="h6" noWrap>
+            {'[' + props.account + ']'}
+            { props.isAdmin ? ' 管理员' : ''}
           </Typography>
           <Button color="inherit" onClick={auth.logout}>登出</Button>
         </Toolbar>

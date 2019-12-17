@@ -9,6 +9,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import {Receipt} from "@material-ui/icons";
 import GroupIcon from '@material-ui/icons/Group';
 import ListIcon from '@material-ui/icons/List';
+import AddBoxIcon from '@material-ui/icons/AddBox';
 import {Link} from "react-router-dom";
 
 const drawerWidth = 240;
@@ -34,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function DashboardDrawer() {
+export default function DashboardDrawer(props: { isAdmin: boolean, }) {
   const classes = useStyles();
   return (
     <div className={classes.root}>
@@ -60,6 +61,10 @@ export default function DashboardDrawer() {
           <ListItem button component={Link} to="/dashboard/query">
             <ListItemIcon><ListIcon/></ListItemIcon>
             <ListItemText primary={'交易查询'} />
+          </ListItem>
+          <ListItem disabled={!props.isAdmin} button component={Link} to="/dashboard/register">
+            <ListItemIcon><AddBoxIcon/></ListItemIcon>
+            <ListItemText primary={'注册组织'} />
           </ListItem>
         </List>
       </Drawer>

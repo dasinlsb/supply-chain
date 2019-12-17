@@ -1,30 +1,34 @@
 # 供应链金融平台
 
-SYSU 2019 区块链课程期末作业
+SYSU 2019 区块链课程 期末作业
 
 > 真实报告存放在`doc/report.md`
+
+## 预览
+
+![](doc/assets/new/mine_page.png)
+
+![](doc/assets/new/users_page.png)
+
+![](doc/assets/new/query_page.png)
+
+![](doc/assets/new/register_page.png)
 
 ## 构建和运行
 
 ### 后端 (`backend`目录)
 
-#### 准备
+在运行之前请先手动将`src/test/resources/contract/Supply.sol`部署到链上，并将部署者PEM私钥放入`src/main/resources`，并修改同目录中`application.yml`的`accounts.pem-file`字段。
 
-请将账户私钥信息（PEM/PKCS12）替换`src/main/resources/application.yml`中的`accounts`字段，并将文件放在该`resources`目录下。
-
-默认会读取`accounts.pem-file`字段作为私钥文件名
-
-#### 部署
-
-首次运行前请尝试修改账户私钥信息并单独运行`test/java`目录下的`org.dasin.supply.deploy.Admin`类的`deployAndCallHelloWorld`方法，该方法会将合约部署到链上并保存合约地址和管理员账户地址信息到`resources/contract.properties`
-
-之后通过单独运行同一类中的`addOrg`方法可以读取管理员账户信息并创建新的组织
-
-这一步详见视频`doc/preview.mp4`
+由于注册新组织需要将私钥存入mysql，所以还需设置`application.yml`中的`spring.datasource.password`字段
 
 #### 运行
 
-使用maven安装依赖后运行`org.dasin.supply.Application`类监听本地8080端口
+```bash
+cd backend
+./gradlew build
+java -jar build/libs/backend-0.0.1-SNAPSHOT.jar
+```
 
 ### 前端(`frontend`目录)
 
@@ -34,5 +38,5 @@ SYSU 2019 区块链课程期末作业
     yarn start
 ```
 
-请用浏览器访问`http://localhost:3000`，输入后端配置文件`application.yml`中的`account.pem-file`字段值（不包括.pem后缀名）
+请用浏览器访问`http://localhost:3000`，并用上述管理员账号地址登录。
 

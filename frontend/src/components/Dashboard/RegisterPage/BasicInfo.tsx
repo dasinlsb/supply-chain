@@ -30,7 +30,7 @@ export default function BasicInfo() {
   return (
     <Container component="main" maxWidth="xs">
       <div className={classes.paper}>
-        <form className={classes.form} noValidate>
+        <div className={classes.form}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
@@ -50,7 +50,7 @@ export default function BasicInfo() {
           </Grid>
 
 
-        </form>
+        </div>
       </div>
 
     </Container>

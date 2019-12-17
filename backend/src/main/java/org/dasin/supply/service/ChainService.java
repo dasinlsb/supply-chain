@@ -99,6 +99,11 @@ public class ChainService {
         logger.info("initialization of chain-end finished");
     }
 
+    public boolean isAdmin(String account) throws Exception {
+        Supply supply = loadSupplyContract();
+        return supply.owner().send().equals(account);
+    }
+
     public String getAddress() {
         return credentials.getAddress();
     }

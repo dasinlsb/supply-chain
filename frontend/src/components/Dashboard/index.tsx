@@ -8,6 +8,8 @@ import UsersPage from "./UsersPage";
 import { Switch, Route } from 'react-router-dom';
 import QueryPage from "./QueryPage";
 import PrivatePage from "./PrivatePage";
+import RegisterPage from "./RegisterPage";
+import {useAuth} from "../AuthProvider";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -25,12 +27,13 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function Dashboard() {
   const classes = useStyles();
+  const auth = useAuth();
 
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <DashboardAppbar />
-      <DashboardDrawer />
+      <DashboardAppbar isAdmin={auth.state.isAdmin} account={auth.state.info.account}/>
+      <DashboardDrawer isAdmin={auth.state.isAdmin}/>
       <main className={classes.content}>
         <div className={classes.toolbar} />
         <Switch>
@@ -38,6 +41,7 @@ export default function Dashboard() {
           <Route path="/dashboard/mine" component={PrivatePage} />
           <Route path="/dashboard/users" component={UsersPage} />
           <Route path="/dashboard/query" component={QueryPage} />
+          <Route path="/dashboard/register" component={RegisterPage} />
         </Switch>
       </main>
     </div>

@@ -10,6 +10,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 
 import {AuthInfoType, useAuth} from "../AuthProvider";
 import qs from "qs";
+import config from "../../config";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -38,25 +39,31 @@ export default function Login() {
   const classes = useStyles();
   const [account, setAccount] = useState('');
   const auth = useAuth();
-
   const login = (account: string) => {
-    fetch('http://localhost:8080/api/v1/login?' + qs.stringify({
+    fetch(config.api_server_url + '/login?' + qs.stringify({
       account,
       seed: Math.random(),
     }), {
       method: 'GET',
       mode: 'cors',
     }).then(res => res.json())
-      .then((data: { info: AuthInfoType, }) => auth.login(data.info))
-      .catch(err => console.log('Login failed:', err))
+    .then((data: { info: AuthInfoType, isAdmin: boolean, }) => {
+      localStorage.setItem('account', account);
+      auth.login(data);
+    })
+    .catch(err => {
+      localStorage.removeItem('account');
+      console.log('Login failed:', err)
+    })
   };
 
   useEffect(() => {
     let account = localStorage.getItem('account');
     if (account) {
+      console.log('found existing account:', account);
       login(account);
     }
-  }, [login]);
+  }, []);
 
   return (
     <div className={classes.paper}>

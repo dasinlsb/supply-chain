@@ -1,10 +1,10 @@
 import axios from './axios'
-import {RegisterInfoType} from '../components/Register/RegisterPage';
+import {RegisterInfoType} from '../components/Dashboard/RegisterPage';
 import config from "../config";
 import qs from "qs";
 
 /**
- * Register an organization
+ * RegisterPage an organization
  * POST
  * /users
  */

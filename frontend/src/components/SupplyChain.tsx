@@ -3,12 +3,10 @@ import {BrowserRouter, Route, RouteProps, Redirect, Switch} from "react-router-d
 import EntryPage from "./Entry/EntryPage";
 import Dashboard from "./Dashboard";
 import {AuthProvider, useAuth} from "./AuthProvider";
-import RegisterPage from "./Register/RegisterPage";
 
 const AuthRoute: React.FC<RouteProps> = ({component, ...rest}) => {
   const auth = useAuth();
   const Component: React.ElementType = component || Dashboard;
-  console.log('AuthRoute is rendering...');
   return (
     <Route
       {...rest}
@@ -34,7 +32,6 @@ export default function SupplyChain() {
       <BrowserRouter>
         <Switch>
           <Route exact path="/" component={EntryPage} />
-          <Route path="/register" component={RegisterPage} />
           <AuthRoute path="/dashboard" component={Dashboard} />
           <Route path="/*" component={EntryPage} />
         </Switch>
