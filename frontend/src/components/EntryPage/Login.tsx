@@ -7,10 +7,12 @@ import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import Copyright from "../Copyright";
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-
 import {AuthInfoType, useAuth} from "../AuthProvider";
 import qs from "qs";
 import config from "../../config";
+import Deploy from "./Deploy";
+import Dropzone from "react-dropzone-uploader";
+import 'react-dropzone-uploader/dist/styles.css';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -35,19 +37,30 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+interface EntryState {
+  openDeploy: boolean;
+  account: string;
+}
+
+const initialState: EntryState = {
+  openDeploy: false,
+  account: '',
+};
+
 export default function Login() {
   const classes = useStyles();
-  const [account, setAccount] = useState('');
+  const [state, setState] = useState(initialState);
   const auth = useAuth();
+
   const login = (account: string) => {
-    fetch(config.api_server_url + '/login?' + qs.stringify({
-      account,
-      seed: Math.random(),
-    }), {
+    fetch(config.api_server_url + '/login?' + qs.stringify({account}), {
       method: 'GET',
       mode: 'cors',
     }).then(res => res.json())
     .then((data: { info: AuthInfoType, isAdmin: boolean, }) => {
+      if (!data.info || !data.info.account) {
+        throw new Error("")
+      }
       localStorage.setItem('account', account);
       auth.login(data);
     })
@@ -75,8 +88,8 @@ export default function Login() {
       </Typography>
       <div className={classes.form}>
         <TextField
-          value={account}
-          onChange={(e) => setAccount(e.target.value)}
+          value={state.account}
+          onChange={(e) => setState({...state, account: e.target.value})}
           variant="outlined"
           margin="normal"
           required
@@ -87,16 +100,25 @@ export default function Login() {
           autoComplete="account"
           autoFocus
         />
+        {/*<Dropzone*/}
+        {/*  getUploadParams={() => ({*/}
+        {/*    url: config.api_server_url + '/upload?' + qs.stringify({type: 'pem',})*/}
+        {/*  })}*/}
+        {/*  onSubmit={(files, allFiles) => allFiles.forEach(f => f.remove())}*/}
+        {/*  inputContent={(file, extra) => (extra.reject ? '只允许上传以.pem后缀的文件' : '请点击或拖拽上传pem私钥文件')}*/}
+        {/*  accept=".pem"*/}
+        {/*/>*/}
         <Button
           type="submit"
           fullWidth
           variant="contained"
           color="primary"
           className={classes.submit}
-          onClick={() => login(account)}
+          onClick={() => login(state.account)}
         >
           登录
         </Button>
+        <Deploy/>
         <Box mt={5}>
           <Copyright />
         </Box>

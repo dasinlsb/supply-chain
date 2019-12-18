@@ -16,7 +16,7 @@ public class InitServlet {
 
     @PostConstruct
     public void init() throws Exception {
-        chainService.initAllService();
+        //chainService.initAllService();
         System.out.println("chain initialize ok");
     }
 }

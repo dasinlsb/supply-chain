@@ -1,8 +1,8 @@
 import React from "react";
 import {BrowserRouter, Route, RouteProps, Redirect, Switch} from "react-router-dom";
-import EntryPage from "./Entry/EntryPage";
 import Dashboard from "./Dashboard";
 import {AuthProvider, useAuth} from "./AuthProvider";
+import EntryPage from "./EntryPage";
 
 const AuthRoute: React.FC<RouteProps> = ({component, ...rest}) => {
   const auth = useAuth();

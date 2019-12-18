@@ -146,14 +146,15 @@ export default function RegisterPage() {
                       {"上一步"}
                     </Button>
                   )}
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={gotoNextStep}
-                    className={classes.button}
-                  >
-                    {state.activeStep === steps.length - 1 ? '回到主页' : '下一步'}
-                  </Button>
+                  {state.activeStep === steps.length - 1 ? null :
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={gotoNextStep}
+                      className={classes.button}
+                    >
+                    下一步
+                    </Button>}
                 </div>
               </React.Fragment>
             )}

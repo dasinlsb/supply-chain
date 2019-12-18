@@ -11,8 +11,6 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-check.dependsOn.remove(test)
-
 repositories {
     maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
     maven { url "https://dl.bintray.com/ethereum/maven/" }

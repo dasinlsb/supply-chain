@@ -36,8 +36,8 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 
-@Configuration
-@ConfigurationProperties(prefix = "accounts")
+//@Configuration
+//@ConfigurationProperties(prefix = "accounts")
 public class AccountConfig {
 
     private String pemFile;
@@ -46,7 +46,7 @@ public class AccountConfig {
     private static final Logger log = LoggerFactory.getLogger(AccountConfig.class);
     @Autowired private EncryptType encryptType;
 
-    @Bean
+//    @Bean
     public Credentials getCredentials()
             throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException,
             InvalidKeySpecException, NoSuchProviderException, CertificateException,

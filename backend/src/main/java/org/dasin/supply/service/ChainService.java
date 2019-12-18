@@ -1,19 +1,13 @@
 package org.dasin.supply.service;
 
 import org.dasin.supply.constants.GasConstants;
-import org.dasin.supply.contract.Asset;
 import org.dasin.supply.contract.Supply;
 import org.dasin.supply.model.Iou;
 import org.dasin.supply.model.Organization;
-import org.fisco.bcos.web3j.abi.datatypes.Address;
-import org.fisco.bcos.web3j.abi.datatypes.generated.Int64;
 import org.fisco.bcos.web3j.crypto.Credentials;
-import org.fisco.bcos.web3j.crypto.EncryptType;
-import org.fisco.bcos.web3j.crypto.gm.GenCredential;
 import org.fisco.bcos.web3j.protocol.Web3j;
 
 import org.fisco.bcos.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.fisco.bcos.web3j.tuples.generated.Tuple2;
 import org.fisco.bcos.web3j.tuples.generated.Tuple3;
 import org.fisco.bcos.web3j.tuples.generated.Tuple7;
 import org.fisco.bcos.web3j.tx.gas.StaticGasProvider;
@@ -25,7 +19,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -37,13 +30,23 @@ public class ChainService {
     static Logger logger = LoggerFactory.getLogger(ChainService.class);
 
     @Autowired private Web3j web3j;
-    @Autowired private Credentials credentials;
+
+    private Credentials credentials;
+
+    public Credentials getCredentials() {
+        return credentials;
+    }
+
+    public void setCredentials(Credentials credentials) {
+        this.credentials = credentials;
+    }
 
     public void deployAndSaveAddr() throws Exception {
         Supply supply = Supply.deploy(web3j, credentials, new StaticGasProvider(GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT)).send();
         System.out.println(" deploy Asset success, contract address is " + supply.getContractAddress());
         Properties prop = new Properties();
         prop.setProperty("address", supply.getContractAddress());
+        prop.setProperty("account", credentials.getAddress());
         final Resource contractResource = new ClassPathResource("contract.properties");
         FileOutputStream fileOutputStream = new FileOutputStream(contractResource.getFile());
         prop.store(fileOutputStream, "contract address");
@@ -68,10 +71,12 @@ public class ChainService {
         return Supply.load(contractAddress, web3j, credentials, new StaticGasProvider(GasConstants.GAS_PRICE, GasConstants.GAS_LIMIT));
     }
 
+    public String getContractAddress()throws Exception {
+        return loadSupplyContract().getContractAddress();
+    }
+
     public void initAllService() throws Exception {
         Assert.assertNotNull(web3j);
-        Assert.assertNotNull(credentials);
-        //deployAndSaveAddr();
         {
 //            Organization org = new Organization();
 //            org.setOrgAddr("0xcdcce60801c0a2e6bb534322c32ae528b9dec8d2");
@@ -104,7 +109,7 @@ public class ChainService {
         return supply.owner().send().equals(account);
     }
 
-    public String getAddress() {
+    public String getAccountAddress() {
         return credentials.getAddress();
     }
 
@@ -164,7 +169,7 @@ public class ChainService {
 
     public void addIou(Iou iou) throws Exception {
         Supply supply = loadSupplyContract();
-        String addr = getAddress();
+        String addr = getAccountAddress();
         iou.setFromOrgAddr(addr);
         TransactionReceipt receipt = supply.addIou(iou.getFromOrgAddr(), iou.getToOrgAddr(),
                 iou.getCreateTime(), BigInteger.valueOf(iou.getAmount()),

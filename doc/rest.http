@@ -1,7 +1,0 @@
-# -*- url-max-redirections: 2 -*-
-:token := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJkYXNpbiIsImV4cCI6MTU3NjA0MjUwNCwianRpIjoiXHUwMDAwIiwiaWF0IjoxNTc1OTU2MTA0LCJpc3MiOiJkYXNpbiIsIm5iZiI6MTU3NTk1NjEwNCwic3ViIjoiYXV0aCJ9.dsuCQoMR42nTyU9ghAysa1ksf9L8Qf2k6lEILr4qJ3s"
-:server := "http://localhost:8080"
-
-# GET
-GET :server/auth/validate
-Authorization: (format "Bare %s" :token)

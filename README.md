@@ -18,9 +18,7 @@ SYSU 2019 区块链课程 期末作业
 
 ### 后端 (`backend`目录)
 
-在运行之前请先手动将`src/test/resources/contract/Supply.sol`部署到链上，并将部署者PEM私钥放入`src/main/resources`，并修改同目录中`application.yml`的`accounts.pem-file`字段。
-
-由于注册新组织需要将私钥存入mysql，所以还需设置`application.yml`中的`spring.datasource.password`字段
+由于注册新组织需要将私钥文件存入mysql，所以需设置`application.yml`中的`spring.datasource.password`字段
 
 #### 运行
 
@@ -33,10 +31,12 @@ java -jar build/libs/backend-0.0.1-SNAPSHOT.jar
 ### 前端(`frontend`目录)
 
 ```bash
-    cd frontend
-    yarn
-    yarn start
+cd frontend
+yarn
+yarn start
 ```
 
-请用浏览器访问`http://localhost:3000`，并用上述管理员账号地址登录。
+请用浏览器访问`http://localhost:3000`。
+
+第一次使用请先部署合约，并记录管理员账户。只有管理员账户有增加成员的权限。
 

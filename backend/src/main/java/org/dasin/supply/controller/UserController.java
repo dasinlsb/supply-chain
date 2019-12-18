@@ -1,9 +1,6 @@
 package org.dasin.supply.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import org.bouncycastle.jce.provider.PEMUtil;
-import org.bouncycastle.util.io.pem.PemReader;
-import org.checkerframework.checker.units.qual.C;
 import org.dasin.supply.model.Account;
 import org.dasin.supply.model.Organization;
 import org.dasin.supply.repository.AccountRepository;
@@ -11,10 +8,9 @@ import org.dasin.supply.service.ChainService;
 import org.fisco.bcos.channel.client.PEMManager;
 import org.fisco.bcos.web3j.crypto.Credentials;
 import org.fisco.bcos.web3j.crypto.ECKeyPair;
+import org.fisco.bcos.web3j.crypto.Keys;
 import org.fisco.bcos.web3j.crypto.gm.GenCredential;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +20,6 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.sql.Timestamp;
 import java.util.*;
 
 @RestController
@@ -38,10 +33,23 @@ public class UserController {
 
     @GetMapping(value = "/login", produces = "application/json;charset=UTF-8")
     public String login(@RequestParam(value = "account")String account, HttpServletRequest request, HttpServletResponse response) {
-        if (!account.equals(chainService.getAddress())) {
+        // try to switch user
+        Optional<Account> _account = accountRepository.findById(account);
+        if (_account.isPresent()) {
+            System.out.println("replace credential with account: " + _account.get().getAddr());
+            Credentials credentials = GenCredential.create(_account.get().getPemPrivateKey());
+            chainService.setCredentials(credentials);
+        }
+        if (chainService.getCredentials() == null || !account.equals(chainService.getAccountAddress())) {
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED, "wrong account"
             );
+        }
+        if (!_account.isPresent()) {
+            Account account1 = new Account();
+            account1.setAddr(account);
+            account1.setPemPrivateKey(chainService.getCredentials().getEcKeyPair().getPrivateKey().toString(16));
+            accountRepository.save(account1);
         }
         Organization org;
         boolean isAdmin;
@@ -132,5 +140,33 @@ public class UserController {
             default:
                 break;
         }
+    }
+
+    @PostMapping(value = "/deploy", produces = "application/json;charset=UTF-8")
+    public String deploy() {
+        JSONObject res = new JSONObject();
+        try {
+            Credentials credentials = Credentials.create(Keys.createEcKeyPair());
+            chainService.setCredentials(credentials);
+            chainService.deployAndSaveAddr();
+            // add self
+            Organization org = new Organization();
+            org.setOrgAddr(credentials.getAddress());
+            org.setOrgId("0");
+            org.setOrgType("admin");
+            org.setIouLimit(10000L);
+            chainService.addOrg(org);
+            Account account = new Account();
+            account.setAddr(credentials.getAddress());
+            account.setPemPrivateKey(credentials.getEcKeyPair().getPrivateKey().toString(16));
+            accountRepository.save(account);
+            res.put("accountAddr", credentials.getAddress());
+            res.put("contractAddr", chainService.getContractAddress());
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, "unknown error: "+e
+            );
+        }
+        return res.toJSONString();
     }
 }

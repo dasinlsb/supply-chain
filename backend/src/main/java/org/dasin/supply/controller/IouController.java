@@ -49,14 +49,14 @@ public class IouController {
     public String getIouListMine() {
         List<Iou> ious;
         try {
-            ious = chainService.getAllIouFrom(chainService.getAddress());
+            ious = chainService.getAllIouFrom(chainService.getAccountAddress());
         } catch (Exception e) {
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, "chain operation error: "+e
             );
         }
         System.out.printf("GET /ious/me, address: %s, data: %s\n",
-                chainService.getAddress(), ious.size());
+                chainService.getAccountAddress(), ious.size());
         JSONObject res = new JSONObject();
         res.put("ious", ious);
         return res.toJSONString();

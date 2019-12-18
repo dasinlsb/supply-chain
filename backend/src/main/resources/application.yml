@@ -21,12 +21,12 @@ channel-service:
 
 accounts:
   pem-file: 0xcdcce60801c0a2e6bb534322c32ae528b9dec8d2.pem
-  p12-file: 0x98333491efac02f8ce109b0c499074d47e7779a6.p12
-  password: 123456
+#  p12-file: 0x98333491efac02f8ce109b0c499074d47e7779a6.p12
+#  password: 123456
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/dasin_supply?createDatabaseIfNotExist=true&characterEncoding=utf8&useSSL=false
+    url: jdbc:mysql://localhost:3306/dasin_supply?createDatabaseIfNotExist=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: 12345abcde
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -35,7 +35,7 @@ spring:
     properties:
       hibernate:
         hbm2ddl:
-          auto: create
+          auto: update
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
 
 

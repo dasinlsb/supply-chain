@@ -13,14 +13,16 @@ export interface AuthState {
   info: AuthInfoType;
 }
 
+const initialInfo: AuthInfoType = {
+  account: '',
+  orgType: '',
+  orgId: '',
+};
+
 const initialState: AuthState = {
   isAdmin: false,
   isAuthenticated: false,
-  info: {
-    account: '',
-    orgType: undefined,
-    orgId: '',
-  }
+  info: initialInfo,
 };
 
 export type ReducerAction =
@@ -32,8 +34,8 @@ const reducer = (state: AuthState, action: ReducerAction) => {
     case "login":
       return {
         ...state,
-        info: action.data.info,
-        isAdmin: action.data.isAdmin,
+        info: action.data.info || initialInfo,
+        isAdmin: action.data.isAdmin || false,
         isAuthenticated: true,
       };
     case "logout":

@@ -1,1 +1,1 @@
-export type OrgType = "enterprise" | "funder" | undefined
+export type OrgType = "enterprise" | "funder" | "admin" | ""
