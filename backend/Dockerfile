@@ -5,11 +5,11 @@ WORKDIR /backend
 
 #COPY gradle gradle
 #COPY gradlew ./
-COPY wait-for-it.sh ./
+COPY wait-for-it.sh /
 
 COPY build.gradle ./
 COPY src src
 
-RUN gradle build
+RUN gradle build -x test
 
 EXPOSE 8080
