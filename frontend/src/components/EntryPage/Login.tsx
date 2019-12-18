@@ -11,7 +11,6 @@ import {AuthInfoType, useAuth} from "../AuthProvider";
 import qs from "qs";
 import config from "../../config";
 import Deploy from "./Deploy";
-import Dropzone from "react-dropzone-uploader";
 import 'react-dropzone-uploader/dist/styles.css';
 
 const useStyles = makeStyles(theme => ({

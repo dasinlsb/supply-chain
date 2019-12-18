@@ -7,17 +7,11 @@ import {MenuItem} from "@material-ui/core";
 import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
-import {useContainer} from "unstated-next";
 import {SubstepProps} from "./index";
-import Button from "@material-ui/core/Button";
 import Dropzone from "react-dropzone-uploader";
 import 'react-dropzone-uploader/dist/styles.css';
-
-
 import config from "../../../config";
 import qs from 'qs';
-import Typography from "@material-ui/core/Typography";
-
 
 const useStyles = makeStyles(theme => ({
   paper: {

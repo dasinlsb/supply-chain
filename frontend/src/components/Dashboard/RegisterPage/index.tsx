@@ -52,12 +52,6 @@ const useStyles = makeStyles(theme => ({
 
 const steps = ['必要信息', '完善基础信息(可选)', '注册完成'];
 
-
-
-function isStepBeforeSubmit(step: number) {
-  return step === steps.length - 2;
-}
-
 export interface RegisterInfoType {
   orgAddr: string;
   orgId: string;
@@ -95,7 +89,7 @@ export default function RegisterPage() {
 
   const [state, setState] = React.useState(initialState);
   const gotoNextStep = () => {
-    if (state.activeStep == steps.length - 2) {
+    if (state.activeStep === steps.length - 2) {
       axios.post(config.api_server_url + '/users', state.info).then(() => setState({...state, activeStep: state.activeStep+1, lastSuccess: true, }))
       .catch(err => setState({...state, activeStep: state.activeStep+1, lastSuccess: false, }))
     } else if (state.activeStep < steps.length - 2) {
