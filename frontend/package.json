@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@types/qs": "^6.9.0",
-    "qs": "^6.9.1",
+    "qs": "^6.9.7",
     "restful-react": "^9.4.2"
   }
 }
